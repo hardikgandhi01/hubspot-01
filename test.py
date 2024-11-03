@@ -49,10 +49,10 @@ entries_last_week = collection.find({
 print(f"Entries updated last week: {list(entries_last_week)}")
 
 # Fetch entries updated within the last two weeks
-entries_last_two_weeks = collection.find({
+entries_last_four_weeks = collection.find({
     "updated_at": {
         "$gte": four_weeks_ago,  # Greater than or equal to two weeks ago
         "$lt": datetime.now()    # Less than now
     }
 })
-print(f"Entries updated last two weeks: {list(entries_last_two_weeks)}")
+print(f"Entries updated in last four weeks: {list(entries_last_four_weeks)}")

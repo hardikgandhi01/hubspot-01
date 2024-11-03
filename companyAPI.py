@@ -29,8 +29,12 @@ print(f"Access Token: {access_token}")  # For debugging
 api_client = HubSpot(access_token=access_token)
 
 # MongoDB setup
-uri = "mongodb+srv://developer:developerMongo@demo.y9gix.mongodb.net/?retryWrites=true&w=majority&appName=demo"
-client = MongoClient(uri, server_api=ServerApi('1'))
+
+load_dotenv()
+
+mongodb_url = os.getenv("MONGODB_URL")
+
+client = MongoClient(mongodb_url, server_api=ServerApi('1'))
 db = client['hubspot-demo']
 collection = db['companies']  # Use a collection specifically for companies
 
@@ -39,9 +43,9 @@ def insert_company_to_mongo(company_data):
     try:
         filter_query = {'id': company_data['id']}
         collection.update_one(
-            filter_query,       # Filter by company ID
-            {'$set': company_data},  # Update with new data
-            upsert=True         # Insert if no document matches the filter
+            filter_query,       
+            {'$set': company_data},  
+            upsert=True         
         )
         # print(f"Upserted company with ID: {company_data['id']}")
     except Exception as e:
@@ -59,7 +63,7 @@ if all_companies:
     for company in all_companies:
         company_dict = company.to_dict()  # Convert the company object to a dictionary
         insert_company_to_mongo(company_dict)
-        print(f"Company inserted: {company_dict}")
+        # print(f"Company inserted: {company_dict}")
 else:
     print("No companies retrieved from HubSpot API.")
 

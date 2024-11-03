@@ -51,10 +51,12 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
 
+load_dotenv()
 
-uri = "mongodb+srv://developer:developerMongo@demo.y9gix.mongodb.net/?retryWrites=true&w=majority&appName=demo"
+mongodb_url = os.getenv("MONGODB_URL")
+
 # Create a new client and connect to the server
-client = MongoClient(uri, server_api=ServerApi('1'))
+client = MongoClient(mongodb_url, server_api=ServerApi('1'))
 
 # try:
 #     client.admin.command('ping')
@@ -75,11 +77,10 @@ def insert_contact_to_mongo(contact_data):
     try:
         filter_query = {'id': contact_data['id']}
         
-        # Perform update if the company exists, otherwise insert it
         collection.update_one(
-            filter_query,     # Filter by company ID
-            {'$set': contact_data},  # Update document with the new data
-            upsert=True  # Insert if no document matches the filter
+            filter_query,     
+            {'$set': contact_data},  
+            upsert=True  
         )
         print(f"Upserted company with ID: {contact_data['id']}")
         # collection.insert_one(contact_data)
@@ -91,7 +92,6 @@ def insert_contact_to_mongo(contact_data):
 # insert code goes here
 if all_contacts:
     for contact in all_contacts:
-        # Assuming 'to_dict()' method converts the contact object to a dictionary
         contact_dict = contact.to_dict()
         insert_contact_to_mongo(contact_dict)
         print(f"contact inserted: {contact_dict}")
